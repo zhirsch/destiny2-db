@@ -16,6 +16,7 @@ import (
 	"reflect"
 	"strings"
 
+	_ "github.com/mattn/go-sqlite3"
 	api "github.com/zhirsch/destiny2-api"
 )
 
@@ -89,24 +90,6 @@ func (db *DB) GetAll(table string, t interface{}) (interface{}, error) {
 	}
 	return values.Interface(), nil
 }
-
-// func decode(encoded string, value interface{}) {
-// }
-
-// func lookup(db *sql.DB, table string, hash uint32, value interface{}) {
-// 	var encoded string
-// 	row := db.QueryRow(fmt.Sprintf("SELECT json FROM %v WHERE id=?", table), int32(hash))
-// 	if err := row.Scan(&encoded); err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	decode(encoded, value)
-// }
-
-// func lookupItem(db *sql.DB, itemHash uint32) api.DestinyDefinitionsDestinyInventoryItemDefinition {
-// 	var definition api.DestinyDefinitionsDestinyInventoryItemDefinition
-// 	lookup(db, "DestinyInventoryItemDefinition", itemHash, &definition)
-// 	return definition
-// }
 
 func download(url, filename string) error {
 	// Download the database.
