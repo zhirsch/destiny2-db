@@ -17,7 +17,8 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
-	api "github.com/zhirsch/destiny2-api"
+	apiclient "github.com/zhirsch/destiny2-api/client"
+	"github.com/go-openapi/runtime"
 )
 
 // A DB is a Destiny2 manifest database that provides static information about objects in the Destiny universe.
@@ -26,17 +27,17 @@ type DB struct {
 }
 
 // Open opens the manifest database.
-func Open(client *api.APIClient) (*DB, error) {
+func Open(client *apiclient.BungieNet, auth runtime.ClientAuthInfoWriter) (*DB, error) {
 	// Fetch the current manifest database's name.
-	resp, _, err := client.Destiny2Api.Destiny2GetDestinyManifest()
+	resp, err := client.Destiny2.Destiny2GetDestinyManifest(nil, auth)
 	if err != nil {
 		return nil, err
 	}
 
 	// Download the manifest database if it doesn't already exist.
-	filename := path.Base(resp.Response.MobileWorldContentPaths["en"])
+	filename := path.Base(resp.Payload.Response.MobileWorldContentPaths["en"])
 	if _, err := os.Stat(filename); err != nil {
-		url := fmt.Sprintf("https://www.bungie.net%s", resp.Response.MobileWorldContentPaths["en"])
+		url := fmt.Sprintf("https://www.bungie.net%s", resp.Payload.Response.MobileWorldContentPaths["en"])
 		log.Printf("Downloading the manifest database from %v", url)
 		if err := download(url, filename); err != nil {
 			return nil, err
